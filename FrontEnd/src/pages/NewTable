@@ -1,0 +1,218 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Checkbox,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+  Paper,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import AddIcon from "@mui/icons-material/Add";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import axios from "axios";
+
+import { downloadPriceSheetPDF } from "./PdfPricesheet";
+
+const PriceListing = ({ onAddClick, onViewClick }) => {
+  const [pricesheetData, setPricesheetData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/pricesheet/getallpricesheets`
+        );
+        console.log("Fetched data:", response.data);
+        setPricesheetData(response.data);
+      } catch (error) {
+        console.error("Error fetching price sheet data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Filter pricesheet data based on the search term
+  const filteredData = pricesheetData.filter((price) =>
+    price.pricesheetName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <Box p={3}>
+      {/* Header */}
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="flex-start"
+        sx={{ mb: 2 }}
+      >
+        <IconButton aria-label="back" sx={{ mr: 1 }}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h5" component="h2" sx={{ fontWeight: "bold" }}>
+          Price Sheet Listing
+        </Typography>
+      </Box>
+
+      {/* Table Section */}
+      <Box
+        p={4}
+        sx={{
+          borderRadius: "16px",
+          backgroundColor: "#FFF",
+        }}
+      >
+        {/* Search and Action Buttons */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={2}
+        >
+          <Box display="flex" alignItems="center">
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: <SearchIcon />,
+              }}
+            />
+            <Button
+              variant="contained"
+              sx={{
+                mx: 1,
+                backgroundColor: "#f3b234",
+                padding: "9px 15px",
+                borderRadius: "8px",
+              }}
+            >
+              Send Email
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                mx: 1,
+                backgroundColor: "#0fa958",
+                padding: "9px 15px",
+                borderRadius: "8px",
+              }}
+            >
+              Share on WhatsApp
+            </Button>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                backgroundColor: "#6362e5",
+                padding: "9px 10px",
+                borderRadius: "8px",
+              }}
+            >
+              <DownloadIcon />
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              sx={{
+                mx: 1,
+                backgroundColor: "#6362e5",
+                padding: "9px 15px",
+                borderRadius: "8px",
+              }}
+              onClick={onAddClick}
+            >
+              Add New Pricesheet
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Table */}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox />
+                </TableCell>
+                <TableCell>
+                  <Typography fontWeight="bold">Name</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography fontWeight="bold">Created On</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography fontWeight="bold">Action</Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredData.map((price, index) => (
+                <TableRow key={index}>
+                  <TableCell padding="checkbox">
+                    <Checkbox />
+                  </TableCell>
+                  <TableCell>{price.pricesheetName || "N/A"}</TableCell>
+                  <TableCell>
+                    {price.date || "N/A"} | {price.time || ""}
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      sx={{ color: "#000000" }}
+                      onClick={() => onViewClick(price._id)}
+                      title={price._id}
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton
+                      sx={{ color: "#0D47A1" }}
+                      onClick={() => downloadPriceSheetPDF(price._id)}
+                    >
+                      <DownloadIcon />
+                    </IconButton>
+                    <IconButton
+                      sx={{ color: "#6A1B9A" }}
+                      onClick={() => onAddClick(price._id)}
+                      title={price._id}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton sx={{ color: "#D32F2F" }}>
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton sx={{ color: "#25D366" }}>
+                      <WhatsAppIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Box>
+  );
+};
+
+export default PriceListing;

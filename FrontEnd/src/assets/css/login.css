@@ -1,0 +1,59 @@
+.log-area {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("../logos/bg3.jpg");
+  background-position: center;
+  background-size: cover;
+}
+.log-area-sub {
+  width: 1050px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.log-sub1 {
+  width: 500px;
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.log-sub1 img {
+  width: 80%;
+  height: 30%;
+}
+.log-sub2 {
+  width: 500px;
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h6 {
+  font-weight: 600;
+  line-height: 14.52px;
+}
+
+.log-color {
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(10, 10, 199);
+}
+
+@media only screen and (max-width: 600px) {
+  .log-area {
+    height: auto;
+  }
+  .log-sub1 {
+    height: 350px;
+  }
+}
